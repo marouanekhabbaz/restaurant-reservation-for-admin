@@ -1,6 +1,6 @@
 # Capstone: Restaurant Reservation System Backend
 
-# Project in progress 
+# Project still in progress 
 
 This starter code for the backend of the capstone project in the Thinkful curriculum.
 
