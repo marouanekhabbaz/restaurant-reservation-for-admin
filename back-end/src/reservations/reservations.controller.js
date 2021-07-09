@@ -43,7 +43,7 @@ function validValues(req ,res , next){
   } else if(!timestamps) {
     return next({
       status: 400,
-      message: `reservation_date and reservation_time must be a Valid`,
+      message: `reservation_date and reservation_time must be valid`,
     });
   }
   else {
@@ -55,7 +55,7 @@ function validValues(req ,res , next){
 function notTuesday(req, res , next){
   const { data : { reservation_date , reservation_time } = {} } = req.body;
   const dateObj = new Date(`${reservation_date} ${reservation_time}`);
-/* An integer number, between 0 and 6, corresponding to the day of the week for the given date, 
+/*getDay() method return an integer number, between 0 and 6, corresponding to the day of the week for the given date, 
 according to local time: 0 for Sunday, 1 for Monday, 2 for Tuesday, and so on.
 */
 const dayOfReservetion = dateObj.getDay();
@@ -101,6 +101,26 @@ if(time< 10.30 || time> 21.30){
 }
 }
 
+
+async function reservationExist(req , res , next){
+  const {reservationId} = req.params;
+  let reservation = await reservations.readData(reservationId);
+  if(reservation){
+      req.reservation = reservation
+      next();
+  } else{
+      next({
+          status:404,
+          message:"Reservation cannot be found."
+      });
+  }
+}
+
+async function read(req, res , next){
+res.json({ data : req.reservation});
+}
+
+
 async function list(req, res) {
   const  {date} = req.query;
   let data = await reservations.list(date)
@@ -119,4 +139,31 @@ async function create(req, res) {
 module.exports = {
   list,
 create: [hasOnlyValidProperties, hasRequiredProperties, validValues , notInThePast ,notTuesday, inOpeningHours ,asyncErrorBoundary(create)],
+read:[reservationExist , read]
 };
+
+/*
+async function movieExist(req , res , next){
+  const {movieId} = req.params;
+  let movie = await movies.readData(movieId);
+  if(movie){
+      next();
+  } else{
+      next({
+          status:404,
+          message:"Movie cannot be found."
+      });
+  }
+}
+
+async function read(req, res , next){
+  try{
+  const {movieId} = req.params;
+let data = await movies.readData(movieId);
+res.json({ data });
+  }
+  catch(err){
+      console.log(err);
+  }
+}
+*/
