@@ -186,6 +186,8 @@ describe("US-04 - Seat reservation", () => {
       barTableOne = await knex("tables").where("table_name", "Bar #1").first();
       tableOne = await knex("tables").where("table_name", "#1").first();
     });
+    
+
 
     describe("PUT /tables/:table_id/seat", () => {
       test("returns 400 if data is missing", async () => {
@@ -221,7 +223,7 @@ describe("US-04 - Seat reservation", () => {
         };
 
         const response = await request(app)
-          .put(`/tables/${tableOne.table_id}/seat`)
+          .put(`/tables/999/seat`)
           .set("Accept", "application/json")
           .send({ data });
 
