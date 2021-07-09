@@ -123,6 +123,27 @@ async function hasSufficientCapacity(req, res , next){
   }
 
 }
+async function isNotOccupied(req , res , next){
+  if(req.table.reservation_id === null){
+    next({
+      status:400,
+      message:`Table is not occupied`
+
+     }) 
+  }else{
+    next()
+  }
+}
+
+async function destroy(req , res , next){
+  const {tableId} = req.params;
+  const table = {
+      ...req.table,
+      reservation_id :null
+  };
+  let updated = await  service.update(table);
+res.json({data: updated });
+}
 
   async function update(req , res , next){
     const {tableId} = req.params;
@@ -151,6 +172,7 @@ res.json({data: updated });
     list,
     create: [hasOnlyValidProperties, hasRequiredProperties ,capacityIsNumber ,verifyLengthOfTableName,asyncErrorBoundary(create)],
     read:[tableExist , asyncErrorBoundary(read)], 
-    update:[tableExist, hasOnlyValidProperties, hasRequiredPropertiesForPut, isOccupied , hasSufficientCapacity,asyncErrorBoundary(update) ]
+    update:[tableExist, hasOnlyValidProperties, hasRequiredPropertiesForPut, isOccupied , hasSufficientCapacity,asyncErrorBoundary(update) ],
+    delete: [tableExist, isNotOccupied ,asyncErrorBoundary(destroy) ]
   };
   
