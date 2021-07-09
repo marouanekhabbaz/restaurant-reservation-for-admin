@@ -90,30 +90,3 @@ return (
 
 export default Seat;
 
-/*
-<label htmlFor="referral">
-  How did you hear about us?
-  <select
-    id="referral"
-    name="referral"
-    onChange={handleChange}
-    value={formData.referral}
-  >
-    <option value="">-- Select an Option --</option>
-    <option value="twitter">Twitter</option>
-    <option value="wom">Word of Mouth</option>
-    <option value="youtube">YouTube</option>
-  </select>
-</label>
-*/
-/*
-The /reservations/:reservation_id/seat page will
-
-have the following required and not-nullable fields:
-Table number: <select name="table_id" />. The text of each option must be {table.table_name} - {table.capacity} so the tests can find the options.
-do not seat a reservation with more people than the capacity of the table
-display a Submit button that, when clicked, assigns the table to the reservation then displays the /dashboard page
-PUT to /tables/:table_id/seat/ in order to save the table assignment. The body of the request must be { data: { reservation_id: x } } where X is the reservation_id of the reservation being seated. The tests do not check the body returned by this request.
-display a Cancel button that, when clicked, returns the user to the previous page
-
-*/

@@ -17,7 +17,7 @@ function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   let [tables , setTables] = useState([])
-
+console.log(API_BASE_URL)
   useEffect(loadDashboard, [date]);
 
   useEffect(loadTable, []);
@@ -47,6 +47,18 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   }
 
+ 
+ const freeTable = (table_id) => {
+  window.confirm( "Is this table ready to seat new guests? This cannot be undone.") &&
+  axios
+  .delete(`${API_BASE_URL}/tables/${table_id}/seat` )
+  .then((response) => response.status === 200 && loadTable() )
+  .catch((err) => {
+    setReservationsError(err.response.data.error)
+  });
+ }
+
+
 let listOfSeats = tables.map((table, i)=> {
   return(
 
@@ -55,6 +67,7 @@ let listOfSeats = tables.map((table, i)=> {
   <h3 class="card-text">  {table.table_name}</h3>
   <h5> capacity: {table.capacity}</h5>
   <p data-table-id-status={table.table_id}> {table.reservation_id === null ? "Free" : "Occupied"} </p>
+  { table.reservation_id && <button data-table-id-finish={table.table_id} onClick={()=>freeTable(table.table_id)}>Finish</button> } 
 </div>
 </div>
   )
