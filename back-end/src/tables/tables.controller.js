@@ -3,6 +3,8 @@ const hasProperties = require("../errors/hasProperties");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const reservationService = require("../reservations/reservations.service");
 
+
+
 const VALID_PROPERTIES = [
     'table_id',
     "table_name",
@@ -86,93 +88,190 @@ async function tableExist(req , res , next){
   }
 
   async function read(req, res , next){
+
   res.json({ data : req.table});
+
   }
 
   async function isOccupied(req, res , next){
+
     const { data : {reservation_id} = {} } = req.body;
+
     const {tableId} = req.params;
+
     if(req.table.reservation_id && reservation_id !== null){ 
+
       next({
         status:400,
         message:`Table with id ${tableId} is occupied.`
     });  
+
     }
     else{
       next()
     }
+
   }
-async function hasSufficientCapacity(req, res , next){
-  const {tableId} = req.params;
-  const { data : {reservation_id} = {} } = req.body;
-  if(reservation_id){
+
+  async function setStatusToSeated (req, res , next) {
+    const { data : {reservation_id} = {} } = req.body;
     let reservation = await reservationService.readData(reservation_id);
+
+    if(!reservation){
+      next({
+        status:400,
+        message:`reservation with if ${reservation_id} doesnt exist`
+      })
+    } else if(reservation.status === "seated"){
+
+      next({
+        status:400,
+        message:`reservation already seated`
+      })
+
+    } else {
+      reservation = {
+        ...reservation,
+        status: "seated"
+      }
+  
+    const  seatedStatus = await  reservationService.update(reservation);
+    
+    next()
+    }  
+  }
+
+async function hasSufficientCapacity(req, res , next){
+
+  const {tableId} = req.params;
+
+  const { data : {reservation_id} = {} } = req.body;
+
+  if(reservation_id){
+
+    let reservation = await reservationService.readData(reservation_id);
+
     const {people} = reservation;
+
     const {capacity} = req.table;
+
     if(people> capacity){
-     return next({
+
+      next({
       status:400,
       message:`Table with id ${tableId} doesnt have enough capacity`
 
-     }) 
-    }else{
+       })  }
+    else{
       next()
     }
-  }else{
+  }
+  else{
     next()
   }
 
 }
 async function isNotOccupied(req , res , next){
+
   if(req.table.reservation_id === null){
+
     next({
       status:400,
       message:`Table is not occupied`
-
      }) 
+
   }else{
     next()
   }
+
+}
+async function setStatusToFinish(req, res , next){
+  let reservation = await reservationService.readData(req.table.reservation_id);
+
+  
+
+  if(reservation){
+    reservation = {
+      ...reservation,
+      status: "finished"
+    }
+
+  const  finishStatus = await  reservationService.update(reservation);
+  
+  }
+
+  next()
+
 }
 
+
 async function destroy(req , res , next){
+
   const {tableId} = req.params;
+
   const table = {
       ...req.table,
       reservation_id :null
   };
+
   let updated = await  service.update(table);
-res.json({data: updated });
+
+  res.json({data: updated });
+
 }
 
-  async function update(req , res , next){
+
+
+  async function update(req , res , next) {
+
     const {tableId} = req.params;
+
     const table = {
         ...req.body.data,
         table_id: tableId
     };
-let updated = await  service.update(table);
-res.json({data: updated });
+
+    let updated = await  service.update(table);
+
+    res.json({data: updated });
+
 }
 
   async function create(req, res) {
-    let data = await service.create1(req.body.data) 
-    res.status(201).json({ data })
+
+    let data = await service.create1(req.body.data) ;
+    
+    res.status(201).json({ data });
+
     }
   
 
     async function list(req, res) {
+
         let data = await service.list()
-       res.json({
-         data
-       });
+
+       res.json({ data });
+
      }
   
   module.exports = {
+
     list,
-    create: [hasOnlyValidProperties, hasRequiredProperties ,capacityIsNumber ,verifyLengthOfTableName,asyncErrorBoundary(create)],
+
+    create: [hasOnlyValidProperties, hasRequiredProperties ,
+      capacityIsNumber ,verifyLengthOfTableName,
+      asyncErrorBoundary(create)],
+
     read:[tableExist , asyncErrorBoundary(read)], 
-    update:[tableExist, hasOnlyValidProperties, hasRequiredPropertiesForPut, isOccupied , hasSufficientCapacity,asyncErrorBoundary(update) ],
-    delete: [tableExist, isNotOccupied ,asyncErrorBoundary(destroy) ]
+
+    update:[tableExist, hasOnlyValidProperties,
+       hasRequiredPropertiesForPut, isOccupied , 
+       setStatusToSeated,
+       hasSufficientCapacity,asyncErrorBoundary(update) ],
+
+    delete: [tableExist, isNotOccupied ,
+      setStatusToFinish,
+      asyncErrorBoundary(destroy) ]
+
   };
   

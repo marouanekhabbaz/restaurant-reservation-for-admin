@@ -12,8 +12,18 @@ const { min } = require("../db/connection");
   "mobile_number",
   "reservation_date",
   "reservation_time", 
-  "people"
+  "people",
+  "status"
 ];
+
+const REQUIRED_PROPERTIES = [
+  "first_name",
+  "last_name",
+  "mobile_number",
+  "reservation_date",
+  "reservation_time", 
+  "people",
+]
 
 function hasOnlyValidProperties(req, res, next) {
   const { data = {} } = req.body;
@@ -28,7 +38,7 @@ function hasOnlyValidProperties(req, res, next) {
   }
   next();
 }
-const hasRequiredProperties = hasProperties(...VALID_PROPERTIES );
+const hasRequiredProperties = hasProperties(...REQUIRED_PROPERTIES );
 
 function validValues(req ,res , next){
   const { data : {reservation_date ,reservation_time, people} = {} } = req.body;
@@ -43,7 +53,7 @@ function validValues(req ,res , next){
   } else if(!timestamps) {
     return next({
       status: 400,
-      message: `reservation_date and reservation_time must be valid`,
+      message: `reservation_date must be  YYYY/MM/DD and reservation_time must be HH:MM`,
     });
   }
   else {
@@ -105,16 +115,84 @@ if(time< 10.30 || time> 21.30){
 async function reservationExist(req , res , next){
   const {reservationId} = req.params;
   let reservation = await reservations.readData(reservationId);
+  
   if(reservation){
       req.reservation = reservation
       next();
   } else{
       next({
           status:404,
-          message:"Reservation cannot be found."
+          message:`Reservation with id ${reservationId} cannot be found.`
       });
   }
 }
+
+async function isStatusBooked(req , res , next){
+
+  const { data : { status } = {} } = req.body;
+
+    if(status && status !== "booked"){
+      next({
+        status: 400,
+        message: `${status} not valid, status must be booked`,
+      });
+
+    }
+    else{
+      next()
+    }
+}
+
+
+async function hasValidValueOfStatus(req , res , next){
+  const { data : { status } = {} } = req.body;
+
+  const valid  = {"booked":1, "seated":2, "finished":3} ;
+ 
+  if(!valid[status]){
+    next({
+      status: 400,
+      message: `${status} not valid, status must be "booked", "seated" or  "finished"`,
+    });
+  }else{
+    next()
+  }
+}
+
+async function isDiffrentFromCurrentStatus(req , res , next){
+  const { data : { status } = {} } = req.body;
+  let currentStatus = req.reservation.status
+  // const valid  = {"booked":1, "seated":2, "finished":3} ;
+ /*
+each status key is given a number to make sure that we go in one direction,
+and dont assign a status to booked after is seated or finished.
+|| valid[currentStatus] > valid[status]
+currentStatus === status ||
+ */
+  if( currentStatus === "finished" ){
+    next({
+      status: 400,
+      message: `status is already ${currentStatus}`,
+    });
+  }else{
+    next();
+  }
+
+}
+
+async function update(req , res , next){
+  const {reservationId} = req.params;
+  const { data : { status } = {} } = req.body;
+
+  const reservation = {
+    ...req.reservation,
+    status
+  }
+const  updated = await  reservations.update(reservation);
+res.json({data: updated });
+}
+
+
 
 async function read(req, res , next){
 res.json({ data : req.reservation});
@@ -122,11 +200,22 @@ res.json({ data : req.reservation});
 
 
 async function list(req, res) {
-  const  {date} = req.query;
-  let data = await reservations.list(date)
-  res.json({
-    data
-  });
+  const  {date , mobile_number} = req.query;
+  let data 
+ 
+  if(mobile_number){
+
+   data = await reservations.search(mobile_number)
+    
+  }
+  else{
+    data = await reservations.list(date);
+    data = data.filter((res)=> res.status !== "finished")
+  } 
+
+
+
+  res.json({ data });
 }
 
 
@@ -137,33 +226,12 @@ async function create(req, res) {
 
 
 module.exports = {
-  list,
-create: [hasOnlyValidProperties, hasRequiredProperties, validValues , notInThePast ,notTuesday, inOpeningHours ,asyncErrorBoundary(create)],
-read:[reservationExist , read]
+  list:[asyncErrorBoundary(list)],
+create: [hasOnlyValidProperties, hasRequiredProperties,
+   validValues , notInThePast ,notTuesday, 
+   inOpeningHours, isStatusBooked
+    ,asyncErrorBoundary(create)],
+read:[reservationExist , asyncErrorBoundary(read)],
+update:[reservationExist , hasValidValueOfStatus, isDiffrentFromCurrentStatus ,asyncErrorBoundary(update)],
 };
 
-/*
-async function movieExist(req , res , next){
-  const {movieId} = req.params;
-  let movie = await movies.readData(movieId);
-  if(movie){
-      next();
-  } else{
-      next({
-          status:404,
-          message:"Movie cannot be found."
-      });
-  }
-}
-
-async function read(req, res , next){
-  try{
-  const {movieId} = req.params;
-let data = await movies.readData(movieId);
-res.json({ data });
-  }
-  catch(err){
-      console.log(err);
-  }
-}
-*/

@@ -7,6 +7,7 @@
 const router = require("express").Router();
 const controller = require("./reservations.controller");
 
-router.route("/").get(controller.list).post(controller.create)
+router.route("/:reservationId/status").get(controller.read).put(controller.update)
 router.route("/:reservationId").get(controller.read)
+router.route("/").get(controller.list).post(controller.create)
 module.exports = router;
