@@ -51,7 +51,6 @@ function NewTable(){
         .catch((err) => {
             setTableError(err.response.data.error)
         });
-        console.log(formData)
         setFormData({
             ...initialFormState
         });

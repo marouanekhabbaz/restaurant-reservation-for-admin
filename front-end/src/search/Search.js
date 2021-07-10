@@ -1,14 +1,53 @@
-import { useState } from "react"
-
+import { useEffect, useState } from "react"
+import ReservationList from "../resevations/ReservationList"
+import ErrorAlert from "../layout/ErrorAlert";
+import useQuery from "../utils/useQuery";
+import axios from "axios";
+import { listReservations } from "../utils/api";
 function Search(){
-
-    const [ phoneNumber , setPhoneNumber ] =useState("")
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+    const [ phoneNumber , setPhoneNumber ] =useState("");
+    const [reservationForNumber , setReservationForNumber] = useState([]);
+    const [searchError , setSearchError] = useState(null);
+    const [clickedSearch , setClickedSearch] = useState(false);
+    const [newSearch , setNewSearch] = useState(false);
 
     const changeHandler =({target})=>{
         setPhoneNumber(target.value)
     }
-    console.log(phoneNumber)
+   
+
+
+    function loadReservations() {
+        axios
+        .get(`${API_BASE_URL}/reservations?mobile_number=${phoneNumber}`)
+        .then((response) => {
+           return  setReservationForNumber(response.data.data) })
+        .catch((err) => {
+            setSearchError(err.response.data.error)
+        });
+
+        console.log("called")
+    }
+
+
+    const sumbitHundler =(event) => {
+        
+        event.preventDefault();
+        loadReservations();
+        setClickedSearch(true);
+        setNewSearch(!newSearch);
+        console.log(phoneNumber)
+        console.log(reservationForNumber, "response")
+        setPhoneNumber('')
+    
+    } 
+
+
+
     return (
+      <div>  
+        <ErrorAlert error={searchError}/> 
         <div>           
              <div className="form-body">
                <div className="row">
@@ -21,6 +60,9 @@ function Search(){
                            </div>
 
                                <form className="requires-validation" 
+                               onSubmit={
+                                   sumbitHundler
+                               }
                                 >
                                    <div className="col-md-12">
                                       <input className="form-control" type="text" 
@@ -40,6 +82,8 @@ function Search(){
                </div>
            </div>
        </div>
+      {  clickedSearch &&  <ReservationList thisDayReservations={reservationForNumber} /> }
+    </div>   
            )
 }
 
@@ -48,25 +92,3 @@ export default Search
 
 
 
-
-/*
-The /search page will
-Display a search box <input name="mobile_number" /> that displays the placeholder text: "Enter a customer's phone number"
-Display a "Find" button next to the search box.
-Clicking on the "Find" button will submit a request to the server (e.g. GET /reservations?mobile_phone=555-1212).
-then the system will look for the reservation(s) in the database and display all matched records on the /search page using the same reservations list component as the /dashboard page.
-the search page will display all reservations matching the phone number, regardless of status.
-display No reservations found if there are no records found after clicking the Find button.
-Hint To search for a partial or complete phone number, you should ignore all formatting and search only for the digits. You will need to remove any non-numeric characters from the submitted mobile number and also use the PostgreSQL translate function.
-
-The following function will perform the correct search.
-
-function search(mobile_number) {
-  return knex("reservations")
-    .whereRaw(
-      "translate(mobile_number, '() -', '') like ?",
-      `%${mobile_number.replace(/\D/g, "")}%`
-    )
-    .orderBy("reservation_date");
-}
-*/

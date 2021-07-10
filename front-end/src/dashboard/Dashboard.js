@@ -5,6 +5,7 @@ import useQuery from "../utils/useQuery";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
+import ReservationList from "../resevations/ReservationList"
 /**
  * Defines the dashboard page.
  * @param date
@@ -17,7 +18,7 @@ function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   let [tables , setTables] = useState([])
-console.log(API_BASE_URL)
+
   useEffect(loadDashboard, [date, tables]);
 
   useEffect(loadTable, []);
@@ -59,73 +60,82 @@ console.log(API_BASE_URL)
  }
 
 
-let listOfSeats = tables.map((table, i)=> {
+const listOfSeats = tables.map((table, i)=> {
   return(
+     <div class="card bg-primary" key={i}>
+          <div class="card-body text-center">
 
-<div class="card bg-primary" key={i}>
-<div class="card-body text-center">
-  <h3 class="card-text">  {table.table_name}</h3>
-  <h5> capacity: {table.capacity}</h5>
-  <p data-table-id-status={table.table_id}> {table.reservation_id === null ? "Free" : "Occupied"} </p>
-  { table.reservation_id && <button data-table-id-finish={table.table_id} onClick={()=>freeTable(table.table_id)}>Finish</button> } 
-</div>
-</div>
+              <h3 class="card-text">  {table.table_name}</h3>
+              <h5> capacity: {table.capacity}</h5>
+
+              <p data-table-id-status={table.table_id}> {table.reservation_id === null ? "Free" : "Occupied"} </p>
+
+              { table.reservation_id && 
+              <button data-table-id-finish={table.table_id} onClick={()=>freeTable(table.table_id)}>Finish</button> } 
+
+          </div>
+      </div>
   )
 })
  
 let thisDayReservations = reservations.filter((res)=> res.reservation_date === date) ;
 
-// thisDayReservations = thisDayReservations.sort((a,b)=>  Date.parse(`${a.reservation_date} ${a.reservation_time}`) - Date.parse( `${b.reservation_date} ${b.reservation_time}` ) );
-/*
-
-The /dashboard page will
-display the status of the reservation. The default status is "booked"
-the status text must have a data-reservation-id-status={reservation.reservation_id} attribute, so it can be found by the tests.
-display the Seat button only when the reservation status is "booked".
-clicking the Seat button changes the status to "seated" and hides the Seat button.
-clicking the Finish button associated with the table changes the reservation status to "finished" and removes the reservation from the dashboard.
-to set the status, PUT to /reservations/:reservation_id/status with a body of {data: { status: "<new-status>" } } where <new-status> is one of booked, seated, or finished
-
-
-*/
-
-
-let list = thisDayReservations.map((res, i)=> {
-  return(
-  
-    <tr key={i}>
-      <th scope="row">{res.last_name} </th>
-      <td>{res.first_name}</td>
-      <td>{res.mobile_number}</td>
-      <td>{res.reservation_time}</td>
-      <td>{res.people}</td>
-      <td> { res.status === "booked" && <button href={`/reservations/${res.reservation_id}/seat`}>  <Link to={`/reservations/${res.reservation_id}/seat`} > seat </Link>  </button>} </td>
-      <td> <p data-reservation-id-status={res.reservation_id}> {res.status}  </p> </td>
-    </tr>
-  )
-})
 
   return (
-    <main>
-        <ErrorAlert error={reservationsError} />
-      <section className="ftco-section">
-        <div class="container">
+ <main>
+
+  <ErrorAlert error={reservationsError} />
+
+   <section className="ftco-section">
+
+       <div class="container">
+
           <h1>Dashboard</h1>
+
           <div className="row justify-content-center">
 				    <div className="col-md-6 text-center mb-5">
                 <h4 className="mb-0">Reservations for {(queryDate)? date: "today" }</h4>
 				    </div>
 		    	</div>
 
-
-      <div class="card-columns">
-        {listOfSeats}
-        </div>
+           <div class="card-columns"> {listOfSeats}  </div>
         
-      <div class="row">
-				<div class="col-md-12">
-					<div class="table-wrap">
-      <table className="table table-bordered table-dark table-hover">
+            <div class="row">
+		      		<div class="col-md-12">
+			      		<div class="table-wrap">
+                  <ReservationList thisDayReservations={thisDayReservations} />
+                 </div>
+			        </div>
+		      	</div>
+
+        </div>    
+
+    </section>
+
+  </main>
+  );
+}
+
+export default Dashboard;
+/*
+<Link to={`/reservations/${res.reservation_id}/seat`} > seat </Link>  
+*/
+
+// let list = thisDayReservations.map((res, i)=> {
+//   return(
+  
+//     <tr key={i}>
+//       <th scope="row">{res.last_name} </th>
+//       <td>{res.first_name}</td>
+//       <td>{res.mobile_number}</td>
+//       <td>{res.reservation_time}</td>
+//       <td>{res.people}</td>
+//       <td> { res.status === "booked" && <button href={`/reservations/${res.reservation_id}/seat`}>  <Link to={`/reservations/${res.reservation_id}/seat`} > seat </Link>  </button>} </td>
+//       <td> <p data-reservation-id-status={res.reservation_id}> {res.status}  </p> </td>
+//     </tr>
+//   )
+// })
+/* <table className="table table-bordered table-dark table-hover">
   <thead className="thead-dark">
     <tr>
       <th scope="col">Last Name</th>
@@ -140,17 +150,4 @@ let list = thisDayReservations.map((res, i)=> {
   <tbody>  
     {list}
   </tbody>
-  </table>
-  </div>
-				</div>
-			</div>
-      </div>    
-  </section>
-    </main>
-  );
-}
-
-export default Dashboard;
-/*
-<Link to={`/reservations/${res.reservation_id}/seat`} > seat </Link>  
-*/
+  </table> */ 
