@@ -18,7 +18,7 @@ function Dashboard({ date }) {
   const [reservationsError, setReservationsError] = useState(null);
   let [tables , setTables] = useState([])
 console.log(API_BASE_URL)
-  useEffect(loadDashboard, [date]);
+  useEffect(loadDashboard, [date, tables]);
 
   useEffect(loadTable, []);
 
@@ -76,6 +76,18 @@ let listOfSeats = tables.map((table, i)=> {
 let thisDayReservations = reservations.filter((res)=> res.reservation_date === date) ;
 
 // thisDayReservations = thisDayReservations.sort((a,b)=>  Date.parse(`${a.reservation_date} ${a.reservation_time}`) - Date.parse( `${b.reservation_date} ${b.reservation_time}` ) );
+/*
+
+The /dashboard page will
+display the status of the reservation. The default status is "booked"
+the status text must have a data-reservation-id-status={reservation.reservation_id} attribute, so it can be found by the tests.
+display the Seat button only when the reservation status is "booked".
+clicking the Seat button changes the status to "seated" and hides the Seat button.
+clicking the Finish button associated with the table changes the reservation status to "finished" and removes the reservation from the dashboard.
+to set the status, PUT to /reservations/:reservation_id/status with a body of {data: { status: "<new-status>" } } where <new-status> is one of booked, seated, or finished
+
+
+*/
 
 
 let list = thisDayReservations.map((res, i)=> {
@@ -87,7 +99,8 @@ let list = thisDayReservations.map((res, i)=> {
       <td>{res.mobile_number}</td>
       <td>{res.reservation_time}</td>
       <td>{res.people}</td>
-      <td> <button href={`/reservations/${res.reservation_id}/seat`}>  <Link to={`/reservations/${res.reservation_id}/seat`} > seat </Link>  </button> </td>
+      <td> { res.status === "booked" && <button href={`/reservations/${res.reservation_id}/seat`}>  <Link to={`/reservations/${res.reservation_id}/seat`} > seat </Link>  </button>} </td>
+      <td> <p data-reservation-id-status={res.reservation_id}> {res.status}  </p> </td>
     </tr>
   )
 })
@@ -121,6 +134,7 @@ let list = thisDayReservations.map((res, i)=> {
       <th scope="col">Time</th>
       <th scope="col">Number of guests</th>
       <th scope="col">Seat</th>
+      <th scope="col">Status</th>
     </tr>
   </thead>
   <tbody>  
