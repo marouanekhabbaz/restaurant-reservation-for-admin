@@ -1,23 +1,37 @@
 
-import React, { useState } from 'react';
-import { useHistory } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useHistory, useParams } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 import axios from "axios";
+import formatReservationDate from "../utils/format-reservation-date"
+import formatReservationTime from "../utils/format-reservation-time"
+import { formatAsDate, formatAsTime } from "../utils/date-time"
 
-function NewReservation(){
+
+
+function EditReservation(){
     const history = useHistory();
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
-    const [reservationsError, setReservationsError] = useState(null);
-    const initialFormState = {
-        first_name: "",
-        last_name: "",
-        mobile_number:"",
-        reservation_date: Date.now(),
-        reservation_time:"10:00",
-        people: ""
-      };
 
-      const [formData, setFormData] = useState({ ...initialFormState });
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+    const {reservation_id} = useParams();
+    const [reservationsError, setReservationsError] = useState(null);
+    
+
+      const [formData, setFormData] = useState({});
+
+
+     function loadReesation(){
+            axios
+            .get(`${API_BASE_URL}/reservations/${reservation_id}`)
+            .then((response) => setFormData(response.data.data) )
+            .catch((err) => {
+                setReservationsError(err.response.data.error)
+            }); 
+     }
+
+      useEffect(loadReesation, [])
+      
+
 
       const handleChange = ({ target }) => {
 
@@ -34,18 +48,22 @@ function NewReservation(){
         }
       };
 
-      console.log(formData.reservation_date , formData.reservation_time)
+      let reservation_time  =  formData.reservation_time && formatAsTime(formData.reservation_time)
+      let reservation_date  = formData.reservation_date &&  formatAsDate(formData.reservation_date)
+       console.log(reservation_time , reservation_date)
+      console.log(new Date(`${reservation_date} ${reservation_time}`))
 
       const handleSubmit = (event) => {
         event.preventDefault();
         axios
-        .post(`${API_BASE_URL}/reservations`, { data: formData })
-        .then((response) => response.status === 201 && history.push(`/dashboard?date=${formData.reservation_date}`) )
+        .put(`${API_BASE_URL}/reservations/${reservation_id}`, { data:  {
+            ...formData,
+            reservation_time: formatAsTime(formData.reservation_time) ,
+            reservation_date: formatAsDate(formData.reservation_date)
+        }})
+        .then((response) => {response.status === 200 &&  history.push(`/dashboard?date=${formatAsDate(formData.reservation_date)}`) } )
         .catch((err) => {
             setReservationsError(err.response.data.error)
-        });
-        setFormData({
-            ...initialFormState
         });
       };
 
@@ -59,10 +77,12 @@ function NewReservation(){
                 <div className="form-content">
                     <div className="form-items">
                       <div className="heading" > 
-                        <h3>Make a reservation</h3>
+                        <h3>Edit a reservation</h3>
                         <p>Fill in the data below.</p>
                       </div>  
                         <form className="requires-validation" onSubmit={handleSubmit} >
+
+
                         <div className="col-md-12">
                         <input id="first_name" type="text" 
                              className="form-control"  
@@ -71,6 +91,7 @@ function NewReservation(){
                             onChange={handleChange}
                                value={formData.first_name}/>
                             </div>
+
                             <div class="col-md-12">
                             <input id="last_name" type="text"
                               name="last_name"
@@ -123,8 +144,6 @@ function NewReservation(){
                                 <button type="button"  className="btn btn-warning ml-1" onClick={() => history.goBack()} >cancel</button>
                             </div>
 
-
-
                             </form>
                     </div>
                 </div>
@@ -135,5 +154,5 @@ function NewReservation(){
    </div>
     )
 }
-export default NewReservation
+export default EditReservation
 

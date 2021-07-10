@@ -33,7 +33,7 @@ function Dashboard({ date }) {
   
   }
 
-  console.log(tables)
+
 
     const query = useQuery();
     const queryDate = query.get("date");
