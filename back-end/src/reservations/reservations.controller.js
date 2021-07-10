@@ -13,7 +13,10 @@ const { min } = require("../db/connection");
   "reservation_date",
   "reservation_time", 
   "people",
-  "status"
+  "status",
+  "reservation_id", 
+  "created_at", 
+  "updated_at"
 ];
 
 const REQUIRED_PROPERTIES = [
@@ -147,7 +150,7 @@ async function isStatusBooked(req , res , next){
 async function hasValidValueOfStatus(req , res , next){
   const { data : { status } = {} } = req.body;
 
-  const valid  = {"booked":1, "seated":2, "finished":3} ;
+  const valid  = {"booked":1, "seated":2, "finished":3, "cancelled":4} ;
  
   if(!valid[status]){
     next({
@@ -189,10 +192,20 @@ async function update(req , res , next){
     status
   }
 const  updated = await  reservations.update(reservation);
-res.json({data: updated });
+res.json({ data: updated });
+
 }
 
+async function updatewholeReservation(req , res , next){
+  const reservation = {
+    ...req.reservation,
+    ...req.body.data
+  }
 
+const  updated = await  reservations.update(reservation);
+res.json({ data: updated });
+
+}
 
 async function read(req, res , next){
 res.json({ data : req.reservation});
@@ -231,7 +244,13 @@ create: [hasOnlyValidProperties, hasRequiredProperties,
    validValues , notInThePast ,notTuesday, 
    inOpeningHours, isStatusBooked
     ,asyncErrorBoundary(create)],
-read:[reservationExist , asyncErrorBoundary(read)],
+    read:[reservationExist , asyncErrorBoundary(read)],
+updatewholeReservation:[reservationExist 
+  ,hasOnlyValidProperties, hasRequiredProperties,
+  validValues 
+  , notInThePast ,notTuesday, 
+  inOpeningHours,
+  asyncErrorBoundary(updatewholeReservation) ],      
 update:[reservationExist , hasValidValueOfStatus, isDiffrentFromCurrentStatus ,asyncErrorBoundary(update)],
 };
 
