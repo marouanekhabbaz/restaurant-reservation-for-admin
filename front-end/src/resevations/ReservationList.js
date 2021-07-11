@@ -77,7 +77,7 @@ return(
                 </tr>
         </thead>
 
-        <tbody>  
+        <tbody className="customtable">  
             {list}
         </tbody>
 </table>

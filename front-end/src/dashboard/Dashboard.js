@@ -125,10 +125,10 @@ console.log(date)
 
            <div className="card-columns"> {listOfSeats}  </div>
         
-            <div className="row">
-		      		<div className="col-md-12">
-			      		<div className="table-wrap">
-                  <ReservationList thisDayReservations={thisDayReservations} />
+            <div className="row justify-content-center">
+            <div class="card bg-dark text-white table-holder" >
+                    <div class="table-responsive">
+                   <ReservationList thisDayReservations={thisDayReservations} />
                  </div>
 			        </div>
 		      	</div>

@@ -27,6 +27,10 @@ tr {
         width:200px
     }    
 
+    .table-holder{
+        width: 100%;
+    }
+
 .form-holder {
       display: flex;
       flex-direction: column;
