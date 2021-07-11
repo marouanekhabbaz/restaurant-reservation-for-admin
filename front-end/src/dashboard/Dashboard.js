@@ -4,18 +4,23 @@ import ErrorAlert from "../layout/ErrorAlert";
 import useQuery from "../utils/useQuery";
 import axios from "axios";
 import ReservationList from "../resevations/ReservationList"
+import { previous, today, next } from "../utils/date-time";
+
 /**
  * Defines the dashboard page.
  * @param date
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ date }) {
+function Dashboard() {
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
-  
+  const query = useQuery();
+  const queryDate = query.get("date");
+  const [date , setDate] = useState((queryDate)? queryDate: today())
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
+  
   let [tables , setTables] = useState([])
 
   useEffect( loadDashboard , [date, tables]);
@@ -33,12 +38,6 @@ function Dashboard({ date }) {
     });
   
   }
-
-
-
-    const query = useQuery();
-    const queryDate = query.get("date");
-    date = (queryDate)? queryDate: date;
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -81,7 +80,7 @@ const listOfSeats = tables.map((table, i)=> {
 })
  
 let thisDayReservations = reservations.filter((res)=> res.reservation_date === date) ;
-
+console.log(date)
 
   return (
  <main>
@@ -91,12 +90,36 @@ let thisDayReservations = reservations.filter((res)=> res.reservation_date === d
    <section className="ftco-section">
 
        <div className="container">
+          
+      
 
-          <h1>Dashboard</h1>
+          <h1 className="mt-3">Dashboard</h1>
 
-          <div className="row justify-content-center">
+          <div className="row justify-content-center mt-4">
+
+           <div  className=".btn-group-lg mr-4 mr-md-3">
+               <button type="button"  className="btn btn-primary frmBtn"
+              onClick={()=> setDate(previous(date))}
+               >Previous</button>
+             </div>
+
+             <div  className=".btn-group-lg mr-4  mr-md-3">
+                 <button type="button"  className="btn btn-warning frmBtn"
+                 onClick={()=> setDate(today)}
+                 >Today</button>
+             </div>
+
+              <div  className=".btn-group-lg  mr-4 mr-md-3"> 
+                  <button type="button"  className="btn btn-primary frmBtn"
+               onClick={()=> setDate(next(date))}
+                  > Next </button>
+            </div>
+
+          </div>
+
+          <div className="row justify-content-center m3 mr-2">
 				    <div className="col-md-6 text-center mb-5">
-                <h4 className="mb-0">Reservations for {(queryDate)? date: "today" }</h4>
+                <h4 className="mt-4">Reservations for { (date=== today())? "today": date  }</h4>
 				    </div>
 		    	</div>
 

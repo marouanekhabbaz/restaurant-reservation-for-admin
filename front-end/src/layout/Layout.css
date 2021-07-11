@@ -20,9 +20,12 @@ tr {
 }
 
 
-
   
 @media all and (min-width: 500px) {
+
+    .frmBtn {
+        width:200px
+    }    
 
 .form-holder {
       display: flex;

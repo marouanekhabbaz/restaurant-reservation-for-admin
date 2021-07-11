@@ -1,9 +1,7 @@
 import React from "react";
-
 import { Redirect, Route, Switch } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
 import NotFound from "./NotFound";
-import { today } from "../utils/date-time";
 import NewReservation from "../resevations/NewResevetion"
 import NewTable from "../tables/NewTable"
 import Seat from "../seat/Seat"
@@ -30,7 +28,7 @@ function Routes() {
       </Route>
 
       <Route path="/dashboard">
-        <Dashboard date={today()} />
+        <Dashboard />
       </Route>
 
       <Route path="/reservations/new">
