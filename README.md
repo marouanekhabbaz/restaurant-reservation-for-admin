@@ -1,4 +1,4 @@
-# Capstone: Restaurant Reservation System
+# Restaurant Reservation System
 
 This app is a reservation system for fine dining restaurants.
 The software is used only by restaurant personnel when a customer calls to request a reservation.
