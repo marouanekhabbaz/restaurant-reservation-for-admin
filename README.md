@@ -143,9 +143,9 @@ GET "/reservations" response example:
 
  POST `/reservations` 
 
-    The request should look like this:
-
 ```js
+
+ The request should look like this:
 
     {
        "first_name": "Marouane",
@@ -160,10 +160,11 @@ GET "/reservations" response example:
 
 PUT `/reservations/:reservation_id` 
 
-     the request should look like this:
 
 ```js
-   
+
+ The request should look like this:
+ 
     {
        "first_name": "Marouane",
         "last_name": "Khabbaz",
@@ -177,10 +178,11 @@ PUT `/reservations/:reservation_id`
 
 PUT `/reservations/:reservation_id/status`
 
-the request should look like this:
 
 ```js
-    
+  
+ The request should look like this:
+  
     {
         "status": "seated"
     }
@@ -203,9 +205,11 @@ GET `/tables` response exemple:
 
  POST `/tables`
 
- Request should look like:
+ 
 
 ```js
+
+Request should look like:
     
     {
         "table_name": "#4",
@@ -216,9 +220,12 @@ GET `/tables` response exemple:
 
  PUT `/tables/:table_id/seat`
 
- Request should look like:
+
 
 ```js
+
+ Request should look like:
+
     {
         "reservation_id": 2
     }
