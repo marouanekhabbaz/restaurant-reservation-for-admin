@@ -130,7 +130,7 @@ let thisDayReservations = reservations.filter((res)=> res.reservation_date === d
           
         
             <div className="row justify-content-center">
-            <div class="card bg-dark text-white table-holder mb-5" >
+            <div className="card bg-dark text-white table-holder mb-5" >
                     <div className="table-responsive">
                    <ReservationList thisDayReservations={thisDayReservations} />
                  </div>

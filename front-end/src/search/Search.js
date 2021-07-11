@@ -98,9 +98,9 @@ function Search(){
                     </div>
                 </div>
                                
-         <div className="row">
-		      <div className="col-md-12">
-			    <div className="table-wrap">
+        <div className="row justify-content-center">
+            <div className="card bg-dark text-white table-holder mb-5" >
+                    <div className="table-responsive">
                     {  clickedSearch &&  <ReservationList thisDayReservations={reservationForNumber} /> }
                   </div>
                </div>
