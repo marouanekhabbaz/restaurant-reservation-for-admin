@@ -3,15 +3,8 @@ import { useHistory } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 import axios from "axios";
 import '../layout/Layout.css'
-/*
-The /tables/new page will
 
-have the following required and not-nullable fields:
-Table name: <input name="table_name" />, which must be at least 2 characters long.
-Capacity: <input name="capacity" />, this is the number of people that can be seated at the table, which must be at least 1 person.
-display a Submit button that, when clicked, saves the new table then displays the /dashboard page
-display a Cancel button that, when clicked, returns the user to the previous page
-*/
+
 
 function NewTable(){
 
@@ -49,6 +42,7 @@ function NewTable(){
         .post(`${API_BASE_URL}/tables`, { data: formData })
         .then((response) => response.status === 201 && history.push(`/dashboard`) )
         .catch((err) => {
+          console.clear()
             setTableError(err.response.data.error)
         });
         setFormData({
@@ -82,14 +76,14 @@ function NewTable(){
                             </div>
 
                             <div className="col-md-12">
-                                <input class="form-control" type="number" 
+                                <input className="form-control" type="number" 
                                 name="capacity" placeholder="capacity"
                                 onChange={handleChange} 
                                 value={formData.capacity}
                                 />
                             </div>
                             <div className="form-button mt-3">
-                                <button id="submit" type="submit" class="btn btn-primary">submit</button>
+                                <button id="submit" type="submit" className="btn btn-primary">submit</button>
                                 <button type="button"  className="btn btn-warning ml-1" onClick={() => history.goBack()} >cancel</button>
                             </div>
                         </form>

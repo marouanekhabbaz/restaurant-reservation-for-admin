@@ -3,8 +3,6 @@ import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import useQuery from "../utils/useQuery";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { useHistory } from "react-router-dom";
 import ReservationList from "../resevations/ReservationList"
 /**
  * Defines the dashboard page.
@@ -13,22 +11,25 @@ import ReservationList from "../resevations/ReservationList"
  * @returns {JSX.Element}
  */
 function Dashboard({ date }) {
+
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
-  const history = useHistory();
+  
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   let [tables , setTables] = useState([])
 
-  useEffect(loadDashboard, [date, tables]);
+  useEffect( loadDashboard , [date, tables]);
 
-  useEffect(loadTable, []);
+  useEffect(loadTable, [ API_BASE_URL ]);
 
   function loadTable(){
     axios
     .get(`${API_BASE_URL}/tables`)
     .then((response) => setTables(response.data.data) )
     .catch((err) => {
+      console.clear()
         setReservationsError(err.response.data.error)
+       
     });
   
   }
@@ -55,6 +56,7 @@ function Dashboard({ date }) {
   .delete(`${API_BASE_URL}/tables/${table_id}/seat` )
   .then((response) => response.status === 200 && loadTable() )
   .catch((err) => {
+    console.clear()
     setReservationsError(err.response.data.error)
   });
  }
@@ -62,10 +64,10 @@ function Dashboard({ date }) {
 
 const listOfSeats = tables.map((table, i)=> {
   return(
-     <div class="card bg-primary" key={i}>
-          <div class="card-body text-center">
+     <div className="card bg-primary" key={i}>
+          <div className="card-body text-center">
 
-              <h3 class="card-text">  {table.table_name}</h3>
+              <h3 className="card-text">  {table.table_name}</h3>
               <h5> capacity: {table.capacity}</h5>
 
               <p data-table-id-status={table.table_id}> {table.reservation_id === null ? "Free" : "Occupied"} </p>
@@ -88,7 +90,7 @@ let thisDayReservations = reservations.filter((res)=> res.reservation_date === d
 
    <section className="ftco-section">
 
-       <div class="container">
+       <div className="container">
 
           <h1>Dashboard</h1>
 
@@ -98,11 +100,11 @@ let thisDayReservations = reservations.filter((res)=> res.reservation_date === d
 				    </div>
 		    	</div>
 
-           <div class="card-columns"> {listOfSeats}  </div>
+           <div className="card-columns"> {listOfSeats}  </div>
         
-            <div class="row">
-		      		<div class="col-md-12">
-			      		<div class="table-wrap">
+            <div className="row">
+		      		<div className="col-md-12">
+			      		<div className="table-wrap">
                   <ReservationList thisDayReservations={thisDayReservations} />
                  </div>
 			        </div>
@@ -117,37 +119,3 @@ let thisDayReservations = reservations.filter((res)=> res.reservation_date === d
 }
 
 export default Dashboard;
-/*
-<Link to={`/reservations/${res.reservation_id}/seat`} > seat </Link>  
-*/
-
-// let list = thisDayReservations.map((res, i)=> {
-//   return(
-  
-//     <tr key={i}>
-//       <th scope="row">{res.last_name} </th>
-//       <td>{res.first_name}</td>
-//       <td>{res.mobile_number}</td>
-//       <td>{res.reservation_time}</td>
-//       <td>{res.people}</td>
-//       <td> { res.status === "booked" && <button href={`/reservations/${res.reservation_id}/seat`}>  <Link to={`/reservations/${res.reservation_id}/seat`} > seat </Link>  </button>} </td>
-//       <td> <p data-reservation-id-status={res.reservation_id}> {res.status}  </p> </td>
-//     </tr>
-//   )
-// })
-/* <table className="table table-bordered table-dark table-hover">
-  <thead className="thead-dark">
-    <tr>
-      <th scope="col">Last Name</th>
-      <th scope="col">First Name</th>
-      <th scope="col">Phone Number</th>
-      <th scope="col">Time</th>
-      <th scope="col">Number of guests</th>
-      <th scope="col">Seat</th>
-      <th scope="col">Status</th>
-    </tr>
-  </thead>
-  <tbody>  
-    {list}
-  </tbody>
-  </table> */ 

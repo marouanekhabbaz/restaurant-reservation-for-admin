@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import ErrorAlert from "../layout/ErrorAlert";
 import axios from "axios";
 
+
 function NewReservation(){
     const history = useHistory();
     const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
@@ -12,7 +13,7 @@ function NewReservation(){
         first_name: "",
         last_name: "",
         mobile_number:"",
-        reservation_date: Date.now(),
+        reservation_date: "", 
         reservation_time:"10:00",
         people: ""
       };
@@ -20,7 +21,6 @@ function NewReservation(){
       const [formData, setFormData] = useState({ ...initialFormState });
 
       const handleChange = ({ target }) => {
-
         if(target.name === "people"){
           setFormData({
             ...formData,
@@ -34,7 +34,6 @@ function NewReservation(){
         }
       };
 
-      console.log(formData.reservation_date , formData.reservation_time)
 
       const handleSubmit = (event) => {
         event.preventDefault();
@@ -42,6 +41,7 @@ function NewReservation(){
         .post(`${API_BASE_URL}/reservations`, { data: formData })
         .then((response) => response.status === 201 && history.push(`/dashboard?date=${formData.reservation_date}`) )
         .catch((err) => {
+          console.clear()
             setReservationsError(err.response.data.error)
         });
         setFormData({
@@ -71,7 +71,7 @@ function NewReservation(){
                             onChange={handleChange}
                                value={formData.first_name}/>
                             </div>
-                            <div class="col-md-12">
+                            <div className="col-md-12">
                             <input id="last_name" type="text"
                               name="last_name"
                               className="form-control"  
@@ -119,7 +119,7 @@ function NewReservation(){
                             <div className="valid-feedback">Reservation Date:</div>
                             </div>
                             <div className="form-button mt-3">
-                                <button id="submit" type="submit" class="btn btn-primary">submit</button>
+                                <button id="submit" type="submit" className="btn btn-primary">submit</button>
                                 <button type="button"  className="btn btn-warning ml-1" onClick={() => history.goBack()} >cancel</button>
                             </div>
 

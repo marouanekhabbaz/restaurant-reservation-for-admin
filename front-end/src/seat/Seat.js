@@ -8,19 +8,20 @@ function Seat(){
      const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
      const [tables , setTables] = useState([]);
      const [tableError, setTableError]= useState(null)
-
-
     const {reservation_id} = useParams();
-    console.log(reservation_id)
+
     let history = useHistory();
     const [theTable , setTheTables] = useState('')
-    useEffect(loadTable, []);
+
+
+    useEffect(loadTable, [API_BASE_URL]);
 
     function loadTable(){
       axios
       .get(`${API_BASE_URL}/tables`)
       .then((response) => setTables(response.data.data) )
       .catch((err) => {
+        console.clear()
         setTableError(err.response.data.error)
       });
     
@@ -37,11 +38,12 @@ function Seat(){
         setTheTables('')
       };
 
-const list = tables.map((table, i)=> {
+
+    const list = tables.map((table, i)=> {
     return(
         <option key={i} value={table.table_id}>{table.table_name} - {table.capacity}</option>
     )
-})
+    })
 
 
 return (
@@ -63,7 +65,7 @@ return (
                          >
         
                             <div className="col-md-12">
-                            <select class="form-select mt-3"  name="table_id"
+                            <select className ="form-select mt-3"  name="table_id"
                              onChange={({target})=> setTheTables(target.value)}
                              value={theTable}
                             >

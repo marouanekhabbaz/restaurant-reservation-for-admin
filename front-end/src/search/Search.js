@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import ReservationList from "../resevations/ReservationList"
 import ErrorAlert from "../layout/ErrorAlert";
-import useQuery from "../utils/useQuery";
 import axios from "axios";
-import { listReservations } from "../utils/api";
+
 
 
 function Search(){
@@ -32,6 +31,7 @@ function Search(){
         .then((response) => {
            return  setReservationForNumber(response.data.data) })
         .catch((err) => {
+            console.clear()
             setSearchError(err.response.data.error)
         });
 
@@ -56,11 +56,11 @@ function Search(){
      <section className="ftco-section">
 
          <ErrorAlert error={searchError}/> 
-        <div class="container">   
+        <div className="container">   
        
-         <div class="row">
-		    <div class="col-md-12">
-			    <div class="table-wrap">
+         <div className="row">
+		    <div className="col-md-12">
+			    <div className="table-wrap">
                       <div className="search-form">
                          <div className="row">
                              <div className="form-holder-search">
@@ -98,9 +98,9 @@ function Search(){
                     </div>
                 </div>
                                
-         <div class="row">
-		      <div class="col-md-12">
-			    <div class="table-wrap">
+         <div className="row">
+		      <div className="col-md-12">
+			    <div className="table-wrap">
                     {  clickedSearch &&  <ReservationList thisDayReservations={reservationForNumber} /> }
                   </div>
                </div>

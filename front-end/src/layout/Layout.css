@@ -8,8 +8,6 @@ html, body {
     height: 100%;
     background-color: #152733;
     color: #f6f2ec
-   
-    /* overflow: hidden; */
 }
 
 tr {
@@ -38,10 +36,8 @@ tr {
 .form-holder-search{
     display: flex;
      flex-direction: column;
-     justify-content: space-around;
-     align-items: start;
+     justify-content: flex-start;
     text-align: center;
-    /* min-height: 100vh; */
 }
 
 .form-holder .form-content {
