@@ -84,7 +84,7 @@ function Search(){
                                    </div>
 
                                    <div className="form-button mt-3">
-                                       <button id="submit" type="submit" class="btn btn-primary">Find</button>
+                                       <button id="submit" type="submit" className="btn btn-primary">Find</button>
                                    </div>
                                </form>
 

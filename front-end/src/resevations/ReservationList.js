@@ -35,20 +35,26 @@ function ReservationList({thisDayReservations }){
             
                 <td> <p data-reservation-id-status={res.reservation_id}> {res.status}  </p> </td>
                 <td> 
+                <div className="btn-group" role="group" aria-label="Basic example">
                 { res.status === "booked" &&
-                     <button href={`/reservations/${res.reservation_id}/seat`}>  
-                        <Link to={`/reservations/${res.reservation_id}/seat`} > seat </Link> 
+                     <button href={`/reservations/${res.reservation_id}/seat`} 
+                     className="btn btn-light ml-1">  
+                        <Link to={`/reservations/${res.reservation_id}/seat`} 
+                        > seat </Link> 
                      </button>} 
 
-                     <button href={`/reservations/${res.reservation_id}/edit`}>  
+                     <button href={`/reservations/${res.reservation_id}/edit`} 
+                     className="btn btn-warning ml-1" >  
                         <Link to={`/reservations/${res.reservation_id}/edit`}> Edit </Link> 
                      </button> 
                      
-                     <button data-reservation-id-cancel={res.reservation_id} onClick={()=>cancelHandler(res) }>  
+                     <button data-reservation-id-cancel={res.reservation_id} 
+                     className="btn btn-danger ml-1"
+                     onClick={()=>cancelHandler(res) }>  
                       Cancel
                      </button> 
-                     
-                      
+                     </div>
+
                 </td>
           </tr>
         )

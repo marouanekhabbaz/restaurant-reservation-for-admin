@@ -63,7 +63,7 @@ function Dashboard() {
 
 const listOfSeats = tables.map((table, i)=> {
   return(
-     <div className="card bg-primary" key={i}>
+     <div className="card bg-primary same-size" key={i}>
           <div className="card-body text-center">
 
               <h3 className="card-text">  {table.table_name}</h3>
@@ -72,7 +72,9 @@ const listOfSeats = tables.map((table, i)=> {
               <p data-table-id-status={table.table_id}> {table.reservation_id === null ? "Free" : "Occupied"} </p>
 
               { table.reservation_id && 
-              <button data-table-id-finish={table.table_id} onClick={()=>freeTable(table.table_id)}>Finish</button> } 
+              <button data-table-id-finish={table.table_id}
+              className="btn btn-light"
+              onClick={()=>freeTable(table.table_id)}>Finish</button> } 
 
           </div>
       </div>
@@ -80,7 +82,7 @@ const listOfSeats = tables.map((table, i)=> {
 })
  
 let thisDayReservations = reservations.filter((res)=> res.reservation_date === date) ;
-console.log(date)
+
 
   return (
  <main>
@@ -94,6 +96,8 @@ console.log(date)
       
 
           <h1 className="mt-3">Dashboard</h1>
+
+          <div className="card-columns mt-4"> {listOfSeats}  </div>
 
           <div className="row justify-content-center mt-4">
 
@@ -123,11 +127,11 @@ console.log(date)
 				    </div>
 		    	</div>
 
-           <div className="card-columns"> {listOfSeats}  </div>
+          
         
             <div className="row justify-content-center">
-            <div class="card bg-dark text-white table-holder" >
-                    <div class="table-responsive">
+            <div class="card bg-dark text-white table-holder mb-5" >
+                    <div className="table-responsive">
                    <ReservationList thisDayReservations={thisDayReservations} />
                  </div>
 			        </div>

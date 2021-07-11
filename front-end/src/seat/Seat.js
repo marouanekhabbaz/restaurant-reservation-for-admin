@@ -75,7 +75,7 @@ return (
                             </div> 
 
                             <div className="form-button mt-3">
-                                <button id="submit" type="submit" class="btn btn-primary">submit</button>
+                                <button id="submit" type="submit" className="btn btn-primary">submit</button>
                                 <button type="button"  className="btn btn-warning ml-1" onClick={() => history.goBack()} >cancel</button>
                             </div>
                         </form>

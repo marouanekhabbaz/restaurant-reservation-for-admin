@@ -19,17 +19,25 @@ tr {
   min-width: 200px;
 }
 
+.frmBtn {
+    width:90px
+} 
 
-  
-@media all and (min-width: 500px) {
 
-    .frmBtn {
+
+@media all and (min-width: 700px) {
+
+    .same-size{
+        height: 200px;
+    }      
+
+.frmBtn {
         width:200px
     }    
 
-    .table-holder{
+.table-holder{
         width: 100%;
-    }
+    }  
 
 .form-holder {
       display: flex;

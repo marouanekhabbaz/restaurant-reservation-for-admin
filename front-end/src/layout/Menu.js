@@ -14,14 +14,7 @@ function Menu() {
   return (
    <nav className="navbar navbar-expand-lg navbar-dark bg-dark static-top"  >
  <div className="container-fluid ">
-  <Link className="navbar-brand" to="/" >
-           <img src="http://placehold.it/150x50?text=Logo" alt=""/>
-         </Link>
-       
-        <hr className="sidebar-divider my-0" />
-        <ul className="nav navbar-nav text-light" id="accordionSidebar">
-        <li className="nav-item"> 
-        <Link
+ <Link
           className="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0"
           to="/"
         >
@@ -29,7 +22,10 @@ function Menu() {
             <span>Periodic Tables</span>
           </div>
         </Link>
-          </li>
+       
+        <hr className="sidebar-divider my-0" />
+        <ul className="nav navbar-nav text-light" id="accordionSidebar">
+  
           <li className="nav-item">
             <Link className="nav-link" to="/dashboard">
               <span className="oi oi-dashboard" />
