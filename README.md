@@ -114,7 +114,7 @@ After:
 | /reservations                                                       | POST   | 201         | Creates a new reservation                                           |
 | /reservations/:reservation_id                                       | GET    | 200         | Returns the reservation for the given ID                            |
 | /reservations/:reservation_id                                       | PUT    | 200         | Updates the status of the reservation for the given ID              |
-| Changes the occupied status to be unoccupied for the given table_id | PUT    | 200         | Updates the status of the reservation for the given ID              |
+| /reservations/:reservation_id/status   | PUT    | 200         | Changes the occupied status to be unoccupied for the given table_id|
 | /tables                                                             | GET    | 200         | Returns a list of tables                                            |
 | /tables                                                             | POST   | 201         | Creates a new table                                                 |
 | /tables/:table_id                                                   | PUT    | 200         | Seats a reservation at the given table_id                           |
